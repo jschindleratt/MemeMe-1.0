@@ -8,9 +8,9 @@
 
 import UIKit
 
-class mememeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    let TopDelegate = TopTextFieldDelegate()
-    let BottomDelegate = BottomTextFieldDelegate()
+class MememeViewController: UIViewController {
+    let topDelegate = TopTextFieldDelegate()
+    let bottomDelegate = BottomTextFieldDelegate()
 
     let memeTextAttributes:[String:Any] = [
         NSStrokeColorAttributeName: UIColor.black,
@@ -18,8 +18,6 @@ class mememeViewController: UIViewController, UIImagePickerControllerDelegate, U
         NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
         NSStrokeWidthAttributeName: -1]
 
-
-    
     @IBOutlet weak var vcPictures: UIImageView!
     
     @IBOutlet weak var saveButton: UIBarButtonItem!
@@ -33,8 +31,8 @@ class mememeViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.txtTop.delegate = TopDelegate
-        self.txtBottom.delegate = BottomDelegate
+        self.txtTop.delegate = topDelegate
+        self.txtBottom.delegate = bottomDelegate
 
         styleButtons(btn: txtTop, txt: "TOP")
         styleButtons(btn: txtBottom, txt: "BOTTOM")
@@ -126,18 +124,21 @@ class mememeViewController: UIViewController, UIImagePickerControllerDelegate, U
     }
     
     func generateMemedImage() -> UIImage {
-        topNavBar.isHidden = true
-        botToolBar.isHidden = true
+        manageToolbars(bolShow: true)
 
         UIGraphicsBeginImageContext(self.view.frame.size)
         view.drawHierarchy(in: self.view.frame, afterScreenUpdates: true)
         let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         
-        topNavBar.isHidden = false
-        botToolBar.isHidden = false
+        manageToolbars(bolShow: false)
         
         return memedImage
+    }
+    
+    func manageToolbars(bolShow: Bool) {
+        topNavBar.isHidden = bolShow
+        botToolBar.isHidden = bolShow
     }
     
     func styleButtons(btn: UITextField, txt: String) {
@@ -145,13 +146,19 @@ class mememeViewController: UIViewController, UIImagePickerControllerDelegate, U
         btn.text = txt
         btn.textAlignment = NSTextAlignment.center
     }
+}
+
+extension MememeViewController: UINavigationControllerDelegate {
+
     
+}
+
+extension MememeViewController: UIImagePickerControllerDelegate {
     func dispPicker(src: UIImagePickerControllerSourceType) {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
         imagePicker.sourceType = src
         present(imagePicker, animated: true, completion: nil)
-
+        
     }
-
 }
